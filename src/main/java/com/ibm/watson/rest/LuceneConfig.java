@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ibm.watson.QueryLucene;
+import com.ibm.watson.SemanticType;
 
 @WebListener
 public class LuceneConfig implements ServletContextListener {
@@ -32,7 +33,8 @@ public class LuceneConfig implements ServletContextListener {
 			queryLucene = new QueryLucene(System.getenv("LUCENE_DIR_NEW"));
 			event.getServletContext().setAttribute("lucene", queryLucene);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Unable to read Lucene index: " + e);
+			throw new RuntimeException();
 		}
 		log.info("Done");
 	}

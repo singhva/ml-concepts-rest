@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 
 import com.ibm.watson.DocumentAndScore;
+import com.ibm.watson.EntityType;
 import com.ibm.watson.QueryLucene;
 import com.ibm.watson.rest.LuceneResponse;
 
@@ -27,7 +28,8 @@ public class LuceneResource {
 	private static Log log = LogFactory.getLog(LuceneResource.class);
 	@Context ServletContext servletContext;
 	@QueryParam(value = "q") String query;
-	@QueryParam(value = "type") String semanticType;
+	@QueryParam(value = "type") List<String> semanticTypes;
+	@QueryParam(value = "entityType") String entityType;
 
     /**
      * Method handling HTTP GET requests. The returned object will be sent
@@ -39,7 +41,24 @@ public class LuceneResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<LuceneResponse> getIt() {
     	QueryLucene queryLucene = (QueryLucene) servletContext.getAttribute("lucene");
-    	List<DocumentAndScore> results = (semanticType == null) ? queryLucene.doQuery(query) : queryLucene.doQuery(query, semanticType);
+    	List<DocumentAndScore> results;
+    	/*
+    	if (entityType != null) {
+    		results = queryLucene.doQuery(query, EntityType.getSemanticTypes(entityType));
+    	}
+    	else if (semanticTypes != null) {
+    		results = queryLucene.doQuery(query, semanticTypes.toArray(new String[0]));
+    	}
+    	
+    	else {
+    		results = queryLucene.doQuery(query);
+    	}
+    	*/
+    	log.info("Semantic types: " + String.join(", ", semanticTypes));
+    	log.info("Query: " + query);
+    	log.info("Entity type: " + entityType);
+    	results = queryLucene.doQuery(query, (entityType != null) ? EntityType.getSemanticTypes(entityType) : (semanticTypes != null) ? semanticTypes.toArray(new String[0]) : new String[0] );
+    	//List<DocumentAndScore> results = (entityType == null) ? (semanticTypes == null ? queryLucene) : queryLucene.doQuery(query, semanticType);
     	log.info("Got " + results.size() + " results");
     	//JsonArrayBuilder value = Json.createArrayBuilder();
     	List<LuceneResponse> responses = new ArrayList<>();

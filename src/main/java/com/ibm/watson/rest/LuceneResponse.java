@@ -8,7 +8,9 @@ import org.apache.lucene.document.Document;
 public class LuceneResponse {
 	Document document;
 	String nciCode;
+	String ncimCui;
 	String parentCode;
+	String parentNcimCui;
 	List<String> names;
 	String type;
 	float score;
@@ -19,7 +21,9 @@ public class LuceneResponse {
 	
 	public LuceneResponse(Document document, float score) {
 		this.nciCode = document.get("code");
+		this.ncimCui = document.get("cui");
 		this.parentCode = document.get("parentCode");
+		this.parentNcimCui = document.get("parentCui");
 		this.names = Arrays.asList(document.getValues("name"));
 		this.type = document.get("type");
 		this.score = score;
@@ -54,6 +58,22 @@ public class LuceneResponse {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getNcimCui() {
+		return ncimCui;
+	}
+
+	public void setNcimCui(String ncimCui) {
+		this.ncimCui = ncimCui;
+	}
+
+	public String getParentNcimCui() {
+		return parentNcimCui;
+	}
+
+	public void setParentNcimCui(String parentNcimCui) {
+		this.parentNcimCui = parentNcimCui;
 	}
 
 	public float getScore() {
